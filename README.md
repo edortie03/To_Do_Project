@@ -25,7 +25,7 @@ SQLite (With an option to change based on gaining new knowledge on other databas
 1️⃣ Clone the Repository
 
 ```bash
-git clone [https://github.com/edortie03/To_Do_Project.git](To_Do_Project)
+git clone https://github.com/edortie03/To_Do_Project.git
 cd To_Do_Project
 ```
 
