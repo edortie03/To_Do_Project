@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-<<<<<<< HEAD
-# Create your models here
-=======
 # Create your models here.
 
 class Task(models.Model):
@@ -19,4 +16,3 @@ class Task(models.Model):
     
     class Meta:
         ordering =['completed']
->>>>>>> edor-dev
