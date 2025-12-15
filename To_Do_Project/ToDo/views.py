@@ -14,19 +14,19 @@ from django.urls import reverse_lazy
 def base(request):
     return render(request, 'base.html')
 
-def login_view(request):
+def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return redirect('dashboard')
+            return redirect('register')
         else:
             messages.error(request, 'Invalid credentials')
     return render(request, 'login.html')
 
-def register_view(request):
+def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -37,7 +37,7 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-def logout_view(request):
+def logout(request):
     auth_logout(request)
     return redirect('base')
 
