@@ -10,11 +10,10 @@ from django.views.generic.edit import  CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy 
 
 # Create your views here.
-#User authentication
 def base(request):
     return render(request, 'base.html')
 
-def login_view(request):
+def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -26,7 +25,7 @@ def login_view(request):
             messages.error(request, 'Invalid credentials')
     return render(request, 'login.html')
 
-def register_view(request):
+def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -37,9 +36,9 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-def logout_view(request):
+def logout(request):
     auth_logout(request)
-    return redirect('base')
+    return redirect('base.html')
 
 
 
