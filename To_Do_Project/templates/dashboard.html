@@ -1,39 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <title>Dashboard</title>
-</head>
-<body>
-    <div id="container">
-        <h1>Welcome, {{ user.username }}!</h1>
-        <a href="{% url 'logout' %}">Logout</a>
-        <h2>Your To-Dos</h2>
-        <ul>
-            {% for todo in todos %}
-                <li>
-                    <strong>{{ todo.title }}</strong>: {{ todo.description }}
-                    {% if todo.completed %}
-                        (Completed)
-                    {% else %}
-                        (Pending)
-                    {% endif %}
-                </li>
-            {% empty %}
-                <li>No todos yet.</li>
-            {% endfor %}
-        </ul>
-        <!-- Add form to create new todo -->
-        <h3>Add New Todo</h3>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" name="title" placeholder="Title" required>
-            <textarea name="description" placeholder="Description"></textarea>
-            <button type="submit">Add Todo</button>
-        </form>
-    </div>
-</body>
+  </head>
+  <body>
+    <h1>My To-do list</h1>
+    <table>
+      <tr>
+        <th>Item</th>
+      </tr>
+      {% for tasks in list %}
+      <tr>
+        <td>{{ tasks.title }}</td>
+        <td><a href="{% url 'task_detail' tasks.id %}">View Details</a></td>
+      </tr>
+      {% empty %}
+      <h4>No tasks available</h4>
+      {% endfor %}
+    </table>
+  </body>
 </html>
