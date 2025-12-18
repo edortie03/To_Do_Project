@@ -13,10 +13,10 @@
       <tr>
         <th>Item</th>
       </tr>
-      {% for tasks in list %}
+      {% for list in task %}
       <tr>
-        <td>{{ tasks.title }}</td>
-        <td><a href="{% url 'task_detail' tasks.id %}">View Details</a></td>
+        <td>{{ list.title }}</td>
+        <td><a href="{% url 'task_detail' list.id %}">View Details</a></td>
       </tr>
       {% empty %}
       <h4>No tasks available</h4>
