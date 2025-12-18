@@ -13,7 +13,7 @@
       <tr>
         <th>Item</th>
       </tr>
-      {% for list in task %}
+      {% for list in object_list %}
       <tr>
         <td>{{ list.title }}</td>
         <td><a href="{% url 'task_detail' list.id %}">View Details</a></td>
