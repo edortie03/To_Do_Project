@@ -20,7 +20,7 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return redirect('dashboard')
+            return redirect('task_list')
         else:
             messages.error(request, 'Invalid credentials')
     return render(request, 'login.html')
@@ -75,4 +75,6 @@ class TaskUpdate(UpdateView):
 #This is a deletion logic which handles deleting an existing task
 class DeleteTask(DeleteView):
     model = Task
-    context_object_name = 'dashboard.hmtl'
+    context_object_name = 'task'
+    template_name = 'task_confirm_delete.html'
+    success_url = reverse_lazy('task_list')
