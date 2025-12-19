@@ -6,7 +6,12 @@
     <title>Task Detail</title>
   </head>
   <body>
+    <p>
+      {% if user.is_authenticated %}Welcome, {{ user.username }}!{% endif %}
+    </p>
     <h1>Task Detail</h1>
     <h2>{{ task.title }}</h2>
+    <p>{{ task.description }}</p>
+    <p>Completed: {{ task.completed }}</p>
   </body>
 </html>

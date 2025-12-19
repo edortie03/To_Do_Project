@@ -9,6 +9,7 @@
   </head>
   <body>
     <p>{% if user.is_authenticated %}Welcome, {{ user.username }}!{% endif %}</p>
+    <p><a href="{% url 'logout' %}"> Logout </a></p>
     <h1>My To-do list</h1>
     <a><a href="{% url 'task_create' %}"> Create New Task </a>
     <table>
