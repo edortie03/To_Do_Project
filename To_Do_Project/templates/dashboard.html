@@ -9,6 +9,7 @@
   </head>
   <body>
     <h1>My To-do list</h1>
+    <a><a href="{% url 'task_create' %}"> Create New Task </a>
     <table>
       <tr>
         <th>Item</th>
@@ -16,7 +17,12 @@
       {% for list in object_list %}
       <tr>
         <td>{{ list.title }}</td>
-        <td><a href="{% url 'task_detail' list.id %}">View Details</a></td>
+        <td> </td>
+        <td><a href="{% url 'task_detail' list.id %}"> View </a></td>
+        <td> </td>
+        <td><a href="{% url 'task_update' list.id %}"> Edit </a></td>
+        <td> </td>
+        <td><a href="{% url 'task_delete' list.id %}"> Delete </a></td>
       </tr>
       {% empty %}
       <h4>No tasks available</h4>

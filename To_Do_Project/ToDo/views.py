@@ -70,6 +70,7 @@ class TaskCreate(CreateView):
 class TaskUpdate(UpdateView):
     model = Task
     fields = '__all__'
+    template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
 
 #This is a deletion logic which handles deleting an existing task
