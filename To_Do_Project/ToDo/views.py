@@ -56,6 +56,9 @@ class TaskList(LoginRequiredMixin, ListView):
     template_name = 'dashboard.html'
 
     def get_queryset(self):
+        search_input = self.request.GET.get('search') or ''
+        if search_input:
+            return Task.objects.filter(user=self.request.user, title__icontains=search_input)
         return Task.objects.filter(user=self.request.user)
 
 # This is a description logic which handles details of a particular task

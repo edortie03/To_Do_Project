@@ -12,6 +12,11 @@
     <p><a href="{% url 'logout' %}"> Logout </a></p>
     <h1>My To-do list</h1>
     <a><a href="{% url 'task_create' %}"> Create New Task </a>
+
+    <form method = "GET">
+      <input type="text" name="search" placeholder="Search tasks..." value="{{ request.GET.search }}">
+      <button type="submit">Search</button>
+    </form>
     <table>
       <tr>
         <th>Item</th>
