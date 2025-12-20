@@ -6,6 +6,7 @@
     <title>Create Task</title>
   </head>
   <body>
+    <p>{% if user.is_authenticated %}Welcome, {{ user.username }}!{% endif %}</p>
     <h1>Create a New Task</h1> 
     <a><a href="{% url 'task_list' %}"> Go back</a>
     <form method="post">

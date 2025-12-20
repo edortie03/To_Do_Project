@@ -10,6 +10,7 @@ from django.views.generic.edit import  CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+
 # Create your views here.
 def base(request):
     return render(request, 'base.html')
@@ -54,6 +55,9 @@ class TaskList(LoginRequiredMixin, ListView):
     context_object_name = 'list'
     template_name = 'dashboard.html'
 
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
+
 # This is a description logic which handles details of a particular task
 class TaskDetail(LoginRequiredMixin,DetailView):
     model = Task
@@ -63,14 +67,18 @@ class TaskDetail(LoginRequiredMixin,DetailView):
 #This is a creation logic which handles creating a new task
 class TaskCreate(LoginRequiredMixin,CreateView):
     model = Task
-    fields = '__all__'
+    fields = ['title', 'description', 'completed']
     template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(TaskCreate, self).form_valid(form)
 
 #This is an updating logic which handles updating an existing task
 class TaskUpdate(LoginRequiredMixin,UpdateView):
     model = Task
-    fields = '__all__'
+    fields = ['title', 'description', 'completed']
     template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
 
