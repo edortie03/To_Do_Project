@@ -8,6 +8,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import  CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy 
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 def base(request):
@@ -48,33 +49,33 @@ Projects logic which includes creating, updating, deleting, viewing tasks
 """
 
 #This is a listing dashboard which shows all details about tasks
-class TaskList(ListView):
+class TaskList(LoginRequiredMixin, ListView):
     model = Task
     context_object_name = 'list'
     template_name = 'dashboard.html'
 
 # This is a description logic which handles details of a particular task
-class TaskDetail(DetailView):
+class TaskDetail(LoginRequiredMixin,DetailView):
     model = Task
     context_object_name = 'task'
     template_name = 'task_detail.html'
 
 #This is a creation logic which handles creating a new task
-class TaskCreate(CreateView):
+class TaskCreate(LoginRequiredMixin,CreateView):
     model = Task
     fields = '__all__'
     template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
 
 #This is an updating logic which handles updating an existing task
-class TaskUpdate(UpdateView):
+class TaskUpdate(LoginRequiredMixin,UpdateView):
     model = Task
     fields = '__all__'
     template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
 
 #This is a deletion logic which handles deleting an existing task
-class DeleteTask(DeleteView):
+class DeleteTask(LoginRequiredMixin,DeleteView):
     model = Task
     context_object_name = 'task'
     template_name = 'task_confirm_delete.html'
