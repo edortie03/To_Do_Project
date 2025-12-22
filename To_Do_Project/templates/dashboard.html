@@ -6,34 +6,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <title>Dashboard</title>
+    <style>
+      .dashboard {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 240px;
+        background: #1f2937;
+        color: #fff;
+        padding: 20px;
+        position: fixed;
+        height: 100vh;
+      }
+
+      .sidebar .logo {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .sidebar nav a {
+        display: block;
+        color: #cbd5e1;
+        padding: 12px;
+        margin-bottom: 10px;
+        text-decoration: none;
+        border-radius: 6px;
+      }
+
+      .sidebar nav a:hover,
+      .sidebar nav a.active {
+        background: #374151;
+        color: #ffffff;
+      }
+
+      /* Main content */
+      .main-content {
+        margin-left: 240px;
+        padding: 30px;
+        background: #f4f6f8;
+        width: 100%;
+      }
+
+      .welcome {
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      /* Search */
+      .search-form {
+        margin: 20px 0;
+      }
+
+      .search-form input {
+        padding: 8px;
+        width: 260px;
+      }
+
+      /* Table */
+      table {
+        width: 100%;
+        background: #fff;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background: #e5e7eb;
+      }
+
+      td a {
+        margin-right: 10px;
+        font-weight: 500;
+      }
+
+      /* Mobile */
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+      }
+
+      .status {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+
+      .status.complete {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .status.pending {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+    </style>
   </head>
   <body>
-    <p>{% if user.is_authenticated %}Welcome, {{ user.username }}!{% endif %}</p>
-    <p><a href="{% url 'logout' %}"> Logout </a></p>
-    <h1>My To-do list</h1>
-    <a><a href="{% url 'task_create' %}"> Create New Task </a>
+    <div class="dashboard">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2 class="logo">To-Do App</h2>
 
-    <form method = "GET">
-      <input type="text" name="search" placeholder="Search tasks..." value="{{ request.GET.search }}">
-      <button type="submit">Search</button>
-    </form>
-    <table>
-      <tr>
-        <th>Item</th>
-      </tr>
-      {% for list in object_list %}
-      <tr>
-        <td>{{ list.title }}</td>
-        <td> </td>
-        <td><a href="{% url 'task_detail' list.id %}"> View </a></td>
-        <td> </td>
-        <td><a href="{% url 'task_update' list.id %}"> Edit </a></td>
-        <td> </td>
-        <td><a href="{% url 'task_delete' list.id %}"> Delete </a></td>
-      </tr>
-      {% empty %}
-      <h4>No tasks available</h4>
-      {% endfor %}
-    </table>
+        <nav>
+          <a href="{% url 'task_list' %}" class="active">Dashboard</a>
+          <a href="{% url 'task_create' %}">Create Task</a>
+          <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <p class="welcome">
+          {% if user.is_authenticated %}Welcome, {{ user.username }}!{% endif %}
+        </p>
+
+        <h1>My To-Do List</h1>
+
+        <form method="GET" class="search-form">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search tasks..."
+            value="{{ request.GET.search }}"
+          />
+          <button type="submit">Search</button>
+        </form>
+
+        <table>
+          <tr>
+            <th>Task</th>
+            <th>Actions</th>
+          </tr>
+
+          {% for list in object_list %}
+          <tr>
+            <td>{{ list.title }}</td>
+            <td>
+              <a href="{% url 'task_detail' list.id %}">View</a>
+              <a href="{% url 'task_update' list.id %}">Edit</a>
+              <a href="{% url 'task_delete' list.id %}">Delete</a>
+            </td>
+            <td>
+              {% if list.completed %}
+              <span class="status complete">Completed</span>
+              {% else %}
+              <span class="status pending">Not Completed</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">No tasks available</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </main>
+    </div>
   </body>
 </html>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.contrib.auth.forms import UserCreationForm
+from .forms import RegisterForm
 from .models import Task
 from django.http import HttpResponse
 from django.views.generic.list import ListView
@@ -29,13 +29,14 @@ def login(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Account created successfully')
             return redirect('login')
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
+
     return render(request, 'register.html', {'form': form})
 
 def logout(request):
