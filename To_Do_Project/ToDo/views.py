@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.contrib.auth.forms import UserCreationForm
+from .forms import RegisterForm
 from .models import Task
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import  CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy 
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 # Create your views here.
-#User authentication
 def base(request):
     return render(request, 'base.html')
 
@@ -28,13 +29,14 @@ def login(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Account created successfully')
             return redirect('login')
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
+
     return render(request, 'register.html', {'form': form})
 
 def logout(request):
@@ -49,32 +51,43 @@ Projects logic which includes creating, updating, deleting, viewing tasks
 """
 
 #This is a listing dashboard which shows all details about tasks
-class TaskList(ListView):
+class TaskList(LoginRequiredMixin, ListView):
     model = Task
     context_object_name = 'list'
     template_name = 'dashboard.html'
 
+    def get_queryset(self):
+        search_input = self.request.GET.get('search') or ''
+        if search_input:
+            return Task.objects.filter(user=self.request.user, title__icontains=search_input)
+        return Task.objects.filter(user=self.request.user)
+
 # This is a description logic which handles details of a particular task
-class TaskDetail(DetailView):
+class TaskDetail(LoginRequiredMixin,DetailView):
     model = Task
     context_object_name = 'task'
     template_name = 'task_detail.html'
 
 #This is a creation logic which handles creating a new task
-class TaskCreate(CreateView):
+class TaskCreate(LoginRequiredMixin,CreateView):
     model = Task
-    fields = '__all__'
+    fields = ['title', 'description', 'completed']
     template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(TaskCreate, self).form_valid(form)
+
 #This is an updating logic which handles updating an existing task
-class TaskUpdate(UpdateView):
+class TaskUpdate(LoginRequiredMixin,UpdateView):
     model = Task
-    fields = '__all__'
+    fields = ['title', 'description', 'completed']
+    template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
 
 #This is a deletion logic which handles deleting an existing task
-class DeleteTask(DeleteView):
+class DeleteTask(LoginRequiredMixin,DeleteView):
     model = Task
     context_object_name = 'task'
     template_name = 'task_confirm_delete.html'

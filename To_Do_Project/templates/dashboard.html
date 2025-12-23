@@ -1,39 +1,181 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <title>Dashboard</title>
-</head>
-<body>
-    <div id="container">
-        <h1>Welcome, {{ user.username }}!</h1>
-        <a href="{% url 'logout' %}">Logout</a>
-        <h2>Your To-Dos</h2>
-        <ul>
-            {% for todo in todos %}
-                <li>
-                    <strong>{{ todo.title }}</strong>: {{ todo.description }}
-                    {% if todo.completed %}
-                        (Completed)
-                    {% else %}
-                        (Pending)
-                    {% endif %}
-                </li>
-            {% empty %}
-                <li>No todos yet.</li>
-            {% endfor %}
-        </ul>
-        <!-- Add form to create new todo -->
-        <h3>Add New Todo</h3>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" name="title" placeholder="Title" required>
-            <textarea name="description" placeholder="Description"></textarea>
-            <button type="submit">Add Todo</button>
+    <style>
+      .dashboard {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 240px;
+        background: #1f2937;
+        color: #fff;
+        padding: 20px;
+        position: fixed;
+        height: 100vh;
+      }
+
+      .sidebar .logo {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .sidebar nav a {
+        display: block;
+        color: #cbd5e1;
+        padding: 12px;
+        margin-bottom: 10px;
+        text-decoration: none;
+        border-radius: 6px;
+      }
+
+      .sidebar nav a:hover,
+      .sidebar nav a.active {
+        background: #374151;
+        color: #ffffff;
+      }
+
+      /* Main content */
+      .main-content {
+        margin-left: 240px;
+        padding: 30px;
+        background: #f4f6f8;
+        width: 100%;
+      }
+
+      .welcome {
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      /* Search */
+      .search-form {
+        margin: 20px 0;
+      }
+
+      .search-form input {
+        padding: 8px;
+        width: 260px;
+      }
+
+      /* Table */
+      table {
+        width: 100%;
+        background: #fff;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background: #e5e7eb;
+      }
+
+      td a {
+        margin-right: 10px;
+        font-weight: 500;
+      }
+
+      /* Mobile */
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+      }
+
+      .status {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+
+      .status.complete {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .status.pending {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2 class="logo">To-Do App</h2>
+
+        <nav>
+          <a href="{% url 'task_list' %}" class="active">Dashboard</a>
+          <a href="{% url 'task_create' %}">Create Task</a>
+          <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <p class="welcome">
+          {% if user.is_authenticated %}Welcome, {{ user.username }}!{% endif %}
+        </p>
+
+        <h1>My To-Do List</h1>
+
+        <form method="GET" class="search-form">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search tasks..."
+            value="{{ request.GET.search }}"
+          />
+          <button type="submit">Search</button>
         </form>
+
+        <table>
+          <tr>
+            <th>Task</th>
+            <th>Actions</th>
+          </tr>
+
+          {% for list in object_list %}
+          <tr>
+            <td>{{ list.title }}</td>
+            <td>
+              <a href="{% url 'task_detail' list.id %}">View</a>
+              <a href="{% url 'task_update' list.id %}">Edit</a>
+              <a href="{% url 'task_delete' list.id %}">Delete</a>
+            </td>
+            <td>
+              {% if list.completed %}
+              <span class="status complete">Completed</span>
+              {% else %}
+              <span class="status pending">Not Completed</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">No tasks available</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </main>
     </div>
-</body>
+  </body>
 </html>
