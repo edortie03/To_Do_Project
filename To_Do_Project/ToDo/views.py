@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from .forms import RegisterForm
 from .models import Task
-from django.http import HttpResponse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import  CreateView, UpdateView, DeleteView
@@ -14,6 +13,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 def base(request):
     return render(request, 'base.html')
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Account created successfully')
+            return redirect('login')
+    else:
+        form = RegisterForm()
+
+    return render(request, 'register.html', {'form': form})
 
 def login(request):
     if request.method == 'POST':
@@ -27,17 +38,7 @@ def login(request):
             messages.error(request, 'Invalid credentials')
     return render(request, 'login.html')
 
-def register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Account created successfully')
-            return redirect('login')
-    else:
-        form = RegisterForm()
 
-    return render(request, 'register.html', {'form': form})
 
 def logout(request):
     auth_logout(request)
@@ -63,13 +64,13 @@ class TaskList(LoginRequiredMixin, ListView):
         return Task.objects.filter(user=self.request.user)
 
 # This is a description logic which handles details of a particular task
-class TaskDetail(LoginRequiredMixin,DetailView):
+class TaskDetail(LoginRequiredMixin, DetailView):
     model = Task
     context_object_name = 'task'
     template_name = 'task_detail.html'
 
 #This is a creation logic which handles creating a new task
-class TaskCreate(LoginRequiredMixin,CreateView):
+class TaskCreate(LoginRequiredMixin, CreateView):
     model = Task
     fields = ['title', 'description', 'completed']
     template_name = 'task_create.html'
@@ -80,14 +81,14 @@ class TaskCreate(LoginRequiredMixin,CreateView):
         return super(TaskCreate, self).form_valid(form)
 
 #This is an updating logic which handles updating an existing task
-class TaskUpdate(LoginRequiredMixin,UpdateView):
+class TaskUpdate(LoginRequiredMixin, UpdateView):
     model = Task
     fields = ['title', 'description', 'completed']
     template_name = 'task_create.html'
     success_url = reverse_lazy('task_list')
 
 #This is a deletion logic which handles deleting an existing task
-class DeleteTask(LoginRequiredMixin,DeleteView):
+class DeleteTask(LoginRequiredMixin, DeleteView):
     model = Task
     context_object_name = 'task'
     template_name = 'task_confirm_delete.html'
